@@ -1,0 +1,2 @@
+# scrapy_houseRenting
+这是一个简单的面向豆瓣爬虫获取租房信息的程序
