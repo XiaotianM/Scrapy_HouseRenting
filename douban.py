@@ -6,12 +6,15 @@ from bs4 import BeautifulSoup
 
 class DouBanScrapy():
 
-    def __init__(self, cookies, headers, urlList, keywords, pages, filename):
+    def __init__(self, cookies, headers, urlList, keywords, pages, AvalibleTime, filename):
         self.urlList = urlList
+        self.InvalidUrl = []
         self.keywords = keywords
         self.cookies = cookies
         self.headers = headers
         self.pages = pages
+        self.AvalibleTime = AvalibleTime
+
         self.num = 0
         self.file = open(filename, "w")
 
@@ -30,7 +33,7 @@ class DouBanScrapy():
         return response.text
 
 
-    def getData(self, html):
+    def getData(self, html, url, cur):
         soup = BeautifulSoup(html, "html.parser")
         targetList = soup.find("table", attrs={'class':'olt'})
 
@@ -38,11 +41,16 @@ class DouBanScrapy():
             dataRow = target.find("a", attrs={""})
             dataInfo = dataRow["title"]
             dataLink = dataRow["href"]
-            data = [dataInfo, dataLink]
+            dataTime = target.find("td", attrs={"nowrap":"nowrap", "class":"time"}).string
+
+            if dataTime < AvalibleTime:
+                return False
+
+            data = [dataInfo, dataLink, dataTime]
             for key in self.keywords:
                 if dataInfo.find(key) != -1:
                     self.num = self.num + 1
-                    print("第%d条信息" % self.num)
+                    print("第%d条信息, 来源: %s, 页数: %d" % (self.num, url.split('/')[-2], cur))
                     self.file.write("第%d条信息\n" % self.num)
                     try:
                         print("地址:%s" % data[0])
@@ -51,25 +59,37 @@ class DouBanScrapy():
                         print("Unkown Character can not identified!")
                         self.file.write("Unkown Character can not identified!\n\n")
                         
-                    print("链接:%s\n" % data[1])
+                    print("链接:%s" % data[1])
+                    print("最后回应:%s\n" % data[2])
                     self.file.write("链接:%s\n\n" % data[1])
+                    self.file.write("最后回应:%s\n" % data[2])
                     break
-                    
+        return True
 
-    def getResultFromOneUrlOnePage(self, url):
+
+    def getResultFromOneUrlOnePage(self, url, cur):
         resp = self.getURLText(url)
-        num = self.getData(resp)
-        time.sleep(2)  # 防止封号
+        if not self.getData(resp, url, cur):
+            return False
+        return True
 
 
     def getResultFromMultiUrlOnePage(self, cur):    
         for url in self.urlList:
-            self.getResultFromOneUrlOnePage(url+str(25*cur))
+            if len(self.urlList) == len(self.InvalidUrl):
+                return False
+
+            if url not in self.InvalidUrl:
+                if not self.getResultFromOneUrlOnePage(url+str(25*cur), cur):
+                    self.InvalidUrl.append(url)
+                time.sleep(5)  # 防止封号
+        return True
     
 
     def getResultFromMultiUrlMultiPage(self):
         for page in range(self.pages):
-            self.getResultFromMultiUrlOnePage(page)
+            if not self.getResultFromMultiUrlOnePage(page):
+                break
 
         self.file.close()
 
@@ -92,13 +112,15 @@ if __name__ == "__main__":
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',}
     keywords = ["浦三路","御桥","三林", "云锦路", "华龙新苑", "民苑小区"]
     saveFile = "douban.txt"
-        
+    AvalibleTime = '02-26 00:00' # 5天前的无效
+
     scrapy = DouBanScrapy(
                             cookies = cookies,
                             headers = headers,
                             urlList = url,
                             keywords = keywords,
                             pages = 100,
+                            AvalibleTime = AvalibleTime,
                             filename = saveFile
                         )
 
