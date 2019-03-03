@@ -108,10 +108,13 @@ if __name__ == "__main__":
         "https://www.douban.com/group/zufan/discussion?start="                   # 上海租房@长宁租房/徐汇/静安租房
     ]
 
-    cookies = {'Cookie': 'gr_user_id=7d5b929a-b4ba-4061-963d-ef43e3a225e4; _vwo_uuid_v2=6C93DD01D14122EB4CCD93D7ED548D4D|10418eff5d6b6f4588cc744fd92dfd5b; ll="108296"; _ga=GA1.2.1853304387.1513307102; __utmv=30149280.10051; viewed="30179607_25728092_26593822_3112503_26590403_26979890_25819566"; douban-fav-remind=1; ue="maxiaotiandhu@foxmail.com"; push_doumail_num=0; bid=8Y2UoDNhHlA; __yadk_uid=rqqsUGagTFf7Y7gy0cOk2TN2tfVdA8YE; douban-profile-remind=1; push_noty_num=0; ct=y; __utmc=30149280; __utmz=30149280.1551406613.124.71.utmcsr=baidu|utmccn=(organic)|utmcmd=organic; dbcl2="100513716:E9B6SolJc+o"; ck=S0-C; _pk_ref.100001.8cb4=%5B%22%22%2C%22%22%2C1551424636%2C%22https%3A%2F%2Fwww.baidu.com%2Flink%3Furl%3DRXO56VBqez2Q65K-f0q5lAzWn0e9r5E5Qgn1rU4DyHHEFh1rp27p8e_0hB0o35xluhE6LjZvUI4kk8CzEz0ju_%26wd%3D%26eqid%3Dc1b79f60000531af000000045c789610%22%5D; _pk_ses.100001.8cb4=*; ap_v=0,6.0; __utma=30149280.1853304387.1513307102.1551421087.1551424637.127; __utmt=1; _pk_id.100001.8cb4=b384155da1560c6a.1513307101.123.1551424650.1551421243.; __utmb=30149280.21.5.1551424650839'}
+    # 将cookie填入此
+    cookies = {'Cookie': 'xxxxx'}
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',}
+    # 筛选关键字填入此
     keywords = ["浦三路","御桥","三林", "云锦路", "华龙新苑", "民苑小区"]
     saveFile = "douban.txt"
+    # 日期失活（去掉年份，%month-%day %hour-%minutes)
     AvalibleTime = '02-26 00:00' # 5天前的无效
 
     scrapy = DouBanScrapy(
